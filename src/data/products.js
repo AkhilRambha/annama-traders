@@ -16,6 +16,7 @@ import kalam2 from "@/assets/sarees/kalam2.jfif";
 import kalam3 from "@/assets/sarees/kalm3.jfif";
 
 export const CATEGORIES = [
+  "Fancy Sarees",
   "Kanchi Pattu",
   "Banarasi Silk",
   "Kalamkari",

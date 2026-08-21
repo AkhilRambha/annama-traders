@@ -10,11 +10,11 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showCollections, setShowCollections] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
+
   // Initialize local search state from URL if present
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const prevPathname = useRef(location.pathname);
@@ -45,7 +45,7 @@ export function Navbar() {
   const handleSearchChange = (e) => {
     const q = e.target.value;
     setSearchQuery(q);
-    
+
     if (q.trim()) {
       navigate(`/collections?q=${encodeURIComponent(q)}`, { replace: true });
     } else if (location.pathname === "/collections") {
@@ -71,15 +71,14 @@ export function Navbar() {
       </div>
 
       <div
-        className={`w-full transition-all duration-500 ${
-          scrolled
+        className={`w-full transition-all duration-500 ${scrolled
             ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-sm"
             : "bg-background/80 backdrop-blur-md border-b border-border/50"
-        }`}
+          }`}
       >
         {/* Main Header */}
         <nav className="max-w-screen-2xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between relative">
-          
+
           {/* Left: Logo */}
           <div className="flex-1 flex items-center justify-start gap-3">
             <button
@@ -94,9 +93,9 @@ export function Navbar() {
                 <span className="font-serif text-accent text-xl italic">A</span>
               </div>
               <div className="leading-none">
-                <div className="font-serif text-2xl tracking-widest text-foreground">ANNAMMA</div>
+                <div className="font-serif text-2xl tracking-widest text-foreground">Alankrita</div>
                 <div className="text-[10px] uppercase tracking-[0.4em] text-gold-deep mt-1">
-                  Traders
+                  A BRAND OF ANNAMMA TRADERS
                 </div>
               </div>
             </Link>
@@ -109,15 +108,14 @@ export function Navbar() {
                 <Link
                   to="/"
                   onClick={closeMenus}
-                  className={`relative text-xs uppercase tracking-widest transition-colors ${
-                    location.pathname === "/" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
-                  }`}
+                  className={`relative text-xs uppercase tracking-widest transition-colors ${location.pathname === "/" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
+                    }`}
                 >
                   Home
                 </Link>
               </li>
-              
-              <li 
+
+              <li
                 className="relative h-full flex items-center"
                 onMouseEnter={() => setShowCollections(true)}
                 onMouseLeave={() => setShowCollections(false)}
@@ -125,13 +123,12 @@ export function Navbar() {
                 <Link
                   to="/collections"
                   onClick={closeMenus}
-                  className={`relative flex items-center gap-1 text-xs uppercase tracking-widest transition-colors h-full ${
-                    location.pathname.includes("/collections") ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
-                  }`}
+                  className={`relative flex items-center gap-1 text-xs uppercase tracking-widest transition-colors h-full ${location.pathname.includes("/collections") ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
+                    }`}
                 >
                   Collections <ChevronDown size={14} className={`transition-transform duration-300 ${showCollections ? "rotate-180" : ""}`} />
                 </Link>
-                
+
                 <AnimatePresence>
                   {showCollections && (
                     <motion.div
@@ -145,7 +142,7 @@ export function Navbar() {
                         <h4 className="text-xs uppercase tracking-[0.3em] text-gold-deep mb-4 border-b border-border pb-2">By Category</h4>
                         <div className="grid grid-cols-1 gap-3">
                           {CATEGORIES.slice(0, 5).map(category => (
-                            <Link 
+                            <Link
                               key={category}
                               to={`/collections?category=${encodeURIComponent(category)}`}
                               onClick={closeMenus}
@@ -160,7 +157,7 @@ export function Navbar() {
                         <h4 className="text-xs uppercase tracking-[0.3em] text-gold-deep mb-4 border-b border-border pb-2">Specials</h4>
                         <div className="grid grid-cols-1 gap-3">
                           {CATEGORIES.slice(5).map(category => (
-                            <Link 
+                            <Link
                               key={category}
                               to={`/collections?category=${encodeURIComponent(category)}`}
                               onClick={closeMenus}
@@ -169,7 +166,7 @@ export function Navbar() {
                               {category}
                             </Link>
                           ))}
-                          <Link 
+                          <Link
                             to="/collections"
                             onClick={closeMenus}
                             className="text-sm text-primary font-serif italic mt-4 hover:text-gold-deep transition"
@@ -187,9 +184,8 @@ export function Navbar() {
                 <Link
                   to="/testimonials"
                   onClick={closeMenus}
-                  className={`relative text-xs uppercase tracking-widest transition-colors ${
-                    location.pathname === "/testimonials" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
-                  }`}
+                  className={`relative text-xs uppercase tracking-widest transition-colors ${location.pathname === "/testimonials" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
+                    }`}
                 >
                   Reviews
                 </Link>
@@ -198,9 +194,8 @@ export function Navbar() {
                 <Link
                   to="/about"
                   onClick={closeMenus}
-                  className={`relative text-xs uppercase tracking-widest transition-colors ${
-                    location.pathname === "/about" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
-                  }`}
+                  className={`relative text-xs uppercase tracking-widest transition-colors ${location.pathname === "/about" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
+                    }`}
                 >
                   Our Story
                 </Link>
@@ -209,9 +204,8 @@ export function Navbar() {
                 <Link
                   to="/contact"
                   onClick={closeMenus}
-                  className={`relative text-xs uppercase tracking-widest transition-colors ${
-                    location.pathname === "/contact" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
-                  }`}
+                  className={`relative text-xs uppercase tracking-widest transition-colors ${location.pathname === "/contact" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
+                    }`}
                 >
                   Contact
                 </Link>
@@ -221,16 +215,16 @@ export function Navbar() {
 
           {/* Right: Search & Cart */}
           <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4 xl:gap-6">
-            
+
             {/* Animated Search Bar inline */}
-            <motion.div 
+            <motion.div
               initial={false}
               animate={{ width: isSearchOpen ? (window.innerWidth < 640 ? 140 : 250) : (window.innerWidth < 1280 ? 40 : 90) }}
               className="relative flex items-center justify-end h-10 overflow-hidden"
             >
               <AnimatePresence mode="wait">
                 {!isSearchOpen ? (
-                  <motion.button 
+                  <motion.button
                     key="search-btn"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -242,7 +236,7 @@ export function Navbar() {
                     <span className="text-xs uppercase tracking-widest hidden xl:block">Search</span>
                   </motion.button>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     key="search-input"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -250,7 +244,7 @@ export function Navbar() {
                     className="flex items-center gap-2 w-full border-b border-gold pb-1 absolute right-0"
                   >
                     <Search size={16} className="text-muted-foreground shrink-0" />
-                    <input 
+                    <input
                       type="text"
                       autoFocus
                       value={searchQuery}
@@ -258,8 +252,8 @@ export function Navbar() {
                       placeholder="Search..."
                       className="w-full bg-transparent border-none outline-none text-xs uppercase tracking-widest px-1"
                     />
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => {
                         setIsSearchOpen(false);
                         if (searchQuery) {
@@ -298,7 +292,7 @@ export function Navbar() {
       {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
-          <motion.div 
+          <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "100vh", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -307,16 +301,16 @@ export function Navbar() {
             <div className="p-6">
               <form onSubmit={handleSearchSubmit} className="flex items-center gap-3 mb-8 pb-4 border-b border-border text-muted-foreground relative">
                 <Search size={20} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  placeholder="SEARCH SAREES..." 
+                  placeholder="SEARCH SAREES..."
                   className="bg-transparent border-none outline-none text-sm uppercase tracking-widest w-full pr-8"
                 />
                 {searchQuery && (
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => {
                       setSearchQuery("");
                       navigate(`/collections`, { replace: true });
@@ -336,7 +330,7 @@ export function Navbar() {
                   <Link to="/collections" onClick={closeMenus} className="text-xl uppercase tracking-widest text-primary font-serif mb-4 block">Collections</Link>
                   <div className="grid grid-cols-2 gap-4 pl-4 border-l border-border mt-4">
                     {CATEGORIES.map(category => (
-                      <Link 
+                      <Link
                         key={category}
                         to={`/collections?category=${encodeURIComponent(category)}`}
                         onClick={closeMenus}
