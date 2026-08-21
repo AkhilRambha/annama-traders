@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { Menu, X, ShoppingBag, ChevronDown, Search } from "lucide-react";
+import logo from "@/assets/logo.jpeg";
 import { useCart } from "@/context/CartContext";
 import { CATEGORIES } from "@/data/products";
 import { motion, AnimatePresence } from "framer-motion";
@@ -72,29 +73,29 @@ export function Navbar() {
 
       <div
         className={`w-full transition-all duration-500 ${scrolled
-            ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-sm"
-            : "bg-background/80 backdrop-blur-md border-b border-border/50"
+          ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-sm"
+          : "bg-background/80 backdrop-blur-md border-b border-border/50"
           }`}
       >
         {/* Main Header */}
         <nav className="max-w-screen-2xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between relative">
 
-          {/* Left: Logo */}
-          <div className="flex-1 flex items-center justify-start gap-3">
-            <button
-              onClick={() => setOpen((o) => !o)}
-              className="lg:hidden p-2 -ml-2 text-foreground"
-              aria-label="Menu"
-            >
+          {/* Mobile Menu Button */}
+          <div className="flex-1 lg:hidden">
+            <button onClick={() => setOpen(!open)} className="p-2 -ml-2 text-foreground">
               {open ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <Link to="/" onClick={closeMenus} className="group flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full gradient-royal hidden sm:flex items-center justify-center shadow-luxe">
-                <span className="font-serif text-accent text-xl italic">A</span>
-              </div>
-              <div className="leading-none">
+          </div>
+
+          {/* Left: Logo */}
+          <div className="flex-1 flex items-center justify-center lg:justify-start gap-3">
+            <Link to="/" onClick={closeMenus} className="flex items-center gap-3 group">
+              <img src={logo} alt="Alankrita Silks Logo" className="h-12 md:h-16 object-contain mix-blend-multiply" onError={(e) => {
+                e.target.style.display = 'none';
+              }} />
+              <div className="leading-none flex flex-col justify-center pt-1">
                 <div className="font-serif text-2xl tracking-widest text-foreground">Alankrita</div>
-                <div className="text-[10px] uppercase tracking-[0.4em] text-gold-deep mt-1">
+                <div className="text-[9px] uppercase tracking-[0.2em] text-gold-deep mt-1 font-semibold">
                   A BRAND OF ANNAMMA TRADERS
                 </div>
               </div>
@@ -182,6 +183,17 @@ export function Navbar() {
 
               <li>
                 <Link
+                  to="/jewellery"
+                  onClick={closeMenus}
+                  className={`relative text-xs uppercase tracking-widest transition-colors ${location.pathname === "/jewellery" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
+                    }`}
+                >
+                  Jewellery
+                </Link>
+              </li>
+
+              <li>
+                <Link
                   to="/testimonials"
                   onClick={closeMenus}
                   className={`relative text-xs uppercase tracking-widest transition-colors ${location.pathname === "/testimonials" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
@@ -213,8 +225,8 @@ export function Navbar() {
             </ul>
           </div>
 
-          {/* Right: Search & Cart */}
-          <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4 xl:gap-6">
+          {/* Right: Search & Cart (Hidden on Mobile) */}
+          <div className="flex-1 hidden md:flex items-center justify-end gap-2 sm:gap-4 xl:gap-6">
 
             {/* Animated Search Bar inline */}
             <motion.div
@@ -327,18 +339,27 @@ export function Navbar() {
                   <Link to="/" onClick={closeMenus} className="text-xl uppercase tracking-widest text-primary font-serif">Home</Link>
                 </li>
                 <li>
-                  <Link to="/collections" onClick={closeMenus} className="text-xl uppercase tracking-widest text-primary font-serif mb-4 block">Collections</Link>
-                  <div className="grid grid-cols-2 gap-4 pl-4 border-l border-border mt-4">
-                    {CATEGORIES.map(category => (
+                  <div className="text-xs text-muted-foreground uppercase tracking-widest mb-4">Categories</div>
+                  <div className="grid grid-cols-1 gap-4 pl-4">
+                    {CATEGORIES.filter(c => c !== "Jewellery" && c !== "All Collections").map(category => (
                       <Link
                         key={category}
                         to={`/collections?category=${encodeURIComponent(category)}`}
                         onClick={closeMenus}
-                        className="text-sm text-muted-foreground hover:text-primary uppercase tracking-wider"
+                        className="text-2xl font-serif text-primary hover:text-gold transition"
                       >
                         {category}
                       </Link>
                     ))}
+
+                    {/* Dedicated Jewellery Link in Mobile Menu */}
+                    <Link
+                      to="/jewellery"
+                      onClick={closeMenus}
+                      className="text-2xl font-serif text-gold-deep hover:text-gold transition mt-4 pt-4 border-t border-border"
+                    >
+                      Exquisite Jewellery
+                    </Link>
                   </div>
                 </li>
                 <li>

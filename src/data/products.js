@@ -16,15 +16,14 @@ import kalam2 from "@/assets/sarees/kalam2.jfif";
 import kalam3 from "@/assets/sarees/kalm3.jfif";
 
 export const CATEGORIES = [
-  "Fancy Sarees",
-  "Kanchi Pattu",
+  "All Collections",
+  "Kanjeevaram Silk",
   "Banarasi Silk",
-  "Kalamkari",
   "Soft Silk",
-  "Designer Drapes",
-  "Chanderi",
-  "Mysore Silk",
-  "Organza",
+  "Cotton Silk",
+  "Bridal Collection",
+  "Fancy Sarees",
+  "Jewellery"
 ];
 
 export const PRODUCTS = [
@@ -145,6 +144,55 @@ export const PRODUCTS = [
     image: pattu6,
     isFeatured: true,
     description: "A pastel lavender Banarasi silk heavily woven with silver zari jal work. A favorite among modern brides for its ethereal charm.",
+  },
+  {
+    id: "saree-15",
+    name: "Embroidered Fancy Georgette",
+    price: 4500,
+    category: "Fancy Sarees",
+    image: silk2,
+    isNew: true,
+    description: "A stunning fancy saree with delicate sequin embroidery, perfect for cocktail parties and evening events.",
+  },
+  // JEWELLERY ADDITIONS
+  {
+    id: "jewel-1",
+    name: "Antique Gold Temple Choker",
+    price: 45000,
+    category: "Jewellery",
+    image: "https://images.unsplash.com/photo-1599643477874-5c866f466b89?q=80&w=800&auto=format&fit=crop",
+    isFeatured: true,
+    stock: 2,
+    description: "An exquisite antique-finished gold temple choker featuring intricate Goddess Lakshmi motifs, studded with rubies and emeralds. A masterpiece of South Indian craftsmanship.",
+  },
+  {
+    id: "jewel-2",
+    name: "Polki Diamond Statement Earrings",
+    price: 28000,
+    category: "Jewellery",
+    image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop",
+    isNew: true,
+    stock: 5,
+    description: "Dazzling Polki uncut diamond earrings set in 22k gold. Perfect to pair with bridal wear or evening gowns for a touch of royal elegance.",
+  },
+  {
+    id: "jewel-3",
+    name: "Kundan & Pearl Bridal Set",
+    price: 85000,
+    category: "Jewellery",
+    image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop",
+    isFeatured: true,
+    stock: 1,
+    description: "A heavy bridal Kundan set comprising a necklace, earrings, and maang tikka, adorned with South Sea pearls and semi-precious stones.",
+  },
+  {
+    id: "jewel-4",
+    name: "Classic Gold Nakshi Bangles (Set of 2)",
+    price: 32000,
+    category: "Jewellery",
+    image: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?q=80&w=800&auto=format&fit=crop",
+    stock: 4,
+    description: "Traditional Nakshi work gold bangles showcasing detailed floral patterns. A versatile pair for festive occasions and weddings.",
   }
 ];
 

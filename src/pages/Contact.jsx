@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAdmin } from "@/context/AdminContext";
 
 function ContactPage() {
+  const { contactInfo } = useAdmin();
   const [form, setForm] = useState({ name: "", email: "", phone: "", occasion: "", message: "" });
   const [focused, setFocused] = useState("");
 
@@ -71,10 +73,10 @@ function ContactPage() {
 
           <div className="space-y-8">
             {[
-              { icon: Phone, label: "Phone & WhatsApp", value: "+91 86886 32684", href: "tel:+918688632684" },
-              { icon: Mail, label: "Email Inquiries", value: "annammatraders98@gmail.com", href: "mailto:annammatraders98@gmail.com" },
-              { icon: MapPin, label: "Flagship Studio", value: "Nagole, Hyderabad, Telangana" },
-              { icon: Clock, label: "Consultation Hours", value: "Mon – Sat · 9:00 AM to 9:00 PM" },
+              { icon: Phone, label: "Phone & WhatsApp", value: contactInfo.phone, href: `tel:${contactInfo.phone.replace(/[^0-9+]/g, '')}` },
+              { icon: Mail, label: "Email Inquiries", value: contactInfo.email, href: `mailto:${contactInfo.email}` },
+              { icon: MapPin, label: "Flagship Studio", value: contactInfo.address },
+              { icon: Clock, label: "Consultation Hours", value: contactInfo.hours },
             ].map(({ icon: Icon, label, value, href }) => {
               const Inner = (
                 <div className="flex items-start gap-5 group">

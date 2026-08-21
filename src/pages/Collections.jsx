@@ -2,10 +2,11 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X } from "lucide-react";
-import { PRODUCTS, CATEGORIES } from "@/data/products";
 import { ProductCard } from "@/components/ecommerce/ProductCard";
+import { useAdmin } from "@/context/AdminContext";
 
 function CollectionsPage() {
+  const { products: PRODUCTS, categories: CATEGORIES } = useAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "All";
   const searchQuery = searchParams.get("q") || "";

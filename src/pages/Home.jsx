@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Sparkles, Home as HomeIcon, Calendar, Heart, ShoppingBag, Star, Quote } from "lucide-react";
 
-import { PRODUCTS, CATEGORIES } from "@/data/products";
 import { ProductCard } from "@/components/ecommerce/ProductCard";
+import { useAdmin } from "@/context/AdminContext";
 
+import traditional from "@/assets/sarees/pt3.jfif";
 import bridal from "@/assets/sarees/pt5.jfif";
 import silk from "@/assets/sarees/silk.jfif";
 import designer from "@/assets/sarees/kalm3.jfif";
-import traditional from "@/assets/sarees/pt3.jfif";
 import shopBg from "@/assets/sarees/Shop.jfif";
 import banner from "@/assets/sarees/banner.jpg";
 
@@ -24,13 +24,14 @@ function HomePage() {
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
-  const featuredProducts = PRODUCTS.filter(p => p.isFeatured).slice(0, 4);
-  const newArrivals = PRODUCTS.filter(p => p.isNew).slice(0, 4);
+  const { products, heroImages, categories: CATEGORIES, offers } = useAdmin();
 
-  const legacyImages = [traditional, silk, designer];
+  const featuredProducts = products.filter(p => p.isFeatured).slice(0, 4);
+  const newArrivals = products.filter(p => p.isNew).slice(0, 4);
+
+  const legacyImages = [traditional, heroImages[1] || shopBg, heroImages[2] || banner];
   const [legacyImgIdx, setLegacyImgIdx] = useState(0);
 
-  const heroImages = [bridal, designer, silk];
   const [heroImgIdx, setHeroImgIdx] = useState(0);
 
   useEffect(() => {
@@ -226,6 +227,60 @@ function HomePage() {
         </div>
       </section>
 
+      {/* EXQUISITE JEWELLERY */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-10 py-16 bg-background">
+        <div className="flex items-end justify-between mb-16 flex-wrap gap-6">
+          <div>
+            <div className="text-xs uppercase tracking-[0.4em] text-gold-deep mb-4">
+              — Timeless Adornments
+            </div>
+            <h2 className="font-serif text-5xl md:text-6xl text-primary max-w-2xl">
+              Exquisite <em className="font-script gold-text not-italic">Jewellery.</em>
+            </h2>
+          </div>
+          <Link
+            to="/collections"
+            className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-primary border-b border-gold pb-1 hover:gap-3 transition-all"
+          >
+            Explore Collection <ArrowRight size={14} />
+          </Link>
+        </div>
+
+        <div className="flex overflow-x-auto lg:grid lg:grid-cols-4 gap-4 lg:gap-6 pb-6 hide-scrollbar snap-x snap-mandatory -mx-6 px-6 lg:mx-0 lg:px-0">
+          {products.filter(p => p.category === "Jewellery").slice(0, 4).map((product, index) => (
+            <div key={product.id} className="w-[160px] sm:w-[280px] lg:w-auto flex-shrink-0 lg:flex-shrink snap-start">
+              <ProductCard product={product} index={index} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* COMBINED OFFERS SECTION */}
+      {offers && offers.filter(o => o.isActive).length > 0 && (
+        <section className="max-w-7xl mx-auto px-6 lg:px-10 py-16 bg-background">
+          <div className="text-center mb-12">
+            <div className="text-xs uppercase tracking-[0.4em] text-gold-deep mb-4">Limited Time</div>
+            <h2 className="font-serif text-4xl md:text-5xl text-primary">Exclusive <em className="font-script gold-text not-italic">Offers</em></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {offers.filter(o => o.isActive).map((offer) => (
+              <div key={offer.id} className="group relative overflow-hidden rounded-lg aspect-[16/9] md:aspect-[3/2] flex flex-col justify-end p-8 shadow-sm">
+                <img src={offer.image} alt={offer.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                
+                <div className="relative z-10 text-white">
+                  <h3 className="font-serif text-2xl md:text-3xl mb-2 text-gold">{offer.title}</h3>
+                  <p className="font-light text-sm md:text-base opacity-90 max-w-sm mb-6">{offer.description}</p>
+                  <Link to="/collections" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary text-xs uppercase tracking-widest font-bold rounded-sm hover:bg-gold transition-colors">
+                    Shop Now <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* UNIQUE CRAFT SECTION */}
       <section className="relative py-16 md:py-20 overflow-hidden bg-primary text-primary-foreground">
         <div className="max-w-screen-2xl mx-auto px-6 lg:px-10 grid lg:grid-cols-2 gap-12 md:gap-16 items-center">
@@ -272,7 +327,7 @@ function HomePage() {
             <div className="text-xs uppercase tracking-[0.4em] text-gold mb-6">Our Legacy</div>
             <h2 className="font-serif text-4xl md:text-6xl mb-8 leading-[1.1]">Preserving the <em className="font-script text-gold not-italic">authentic art</em> of Indian weaving.</h2>
             <p className="text-primary-foreground/70 leading-relaxed mb-8 text-lg">
-              For over three generations, Annamma Traders has collaborated directly with master artisans across India. We believe in ethical sourcing, sustaining traditional handloom techniques, and bringing you sarees that aren't just garments, but heirloom pieces of art.
+              For over three generations, Alankrita has collaborated directly with master artisans across India. We believe in ethical sourcing, sustaining traditional handloom techniques, and bringing you sarees that aren't just garments, but heirloom pieces of art.
             </p>
             <Link to="/about" className="inline-flex items-center gap-3 px-8 py-4 border border-gold text-gold hover:bg-gold hover:text-primary transition uppercase tracking-widest text-sm font-semibold rounded-sm">
               Discover Our Story
@@ -404,7 +459,7 @@ function HomePage() {
           <div className="flex overflow-x-auto gap-6 pb-8 hide-scrollbar snap-x snap-mandatory -mx-6 px-6 lg:mx-0 lg:px-0">
             {[
               { name: "Priya Reddy", location: "Hyderabad", text: "The Kanchi Pattu I bought for my sister's wedding was absolutely stunning. The quality of the zari is unmatched, and the home trial made deciding so easy." },
-              { name: "Ananya Sharma", location: "Mumbai", text: "Annamma Traders feels like a closely guarded secret. The Banarasi silk drapes like a dream. Thank you for preserving such authentic craftsmanship." },
+              { name: "Ananya Sharma", location: "Mumbai", text: "Alankrita feels like a closely guarded secret. The Banarasi silk drapes like a dream. Thank you for preserving such authentic craftsmanship." },
               { name: "Lakshmi Iyer", location: "Chennai", text: "I've purchased three sarees from their designer collection. Each piece is a masterpiece. The packaging and delivery were flawless." }
             ].map((test, i) => (
               <div key={i} className="min-w-[280px] md:min-w-[400px] bg-background/5 border border-white/10 p-8 rounded-sm snap-start backdrop-blur-sm">

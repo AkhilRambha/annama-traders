@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { MobileAppNav } from "@/components/site/MobileAppNav";
 import { CartDrawer } from "@/components/ecommerce/CartDrawer";
 import { BottomNav } from "@/components/site/BottomNav";
 
@@ -15,11 +16,12 @@ function LayoutComponent() {
     <div className="min-h-screen flex flex-col relative">
       <Navbar />
       <CartDrawer />
-      <main className="flex-1 pb-16 lg:pb-0">
+      <main className="flex-1 pb-20 lg:pb-0">
         <Outlet />
       </main>
       <Footer />
       <BottomNav />
+      <MobileAppNav />
       <a
         href="https://wa.me/917093010264"
         target="_blank"

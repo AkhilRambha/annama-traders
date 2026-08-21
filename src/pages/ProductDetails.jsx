@@ -1,12 +1,14 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { PRODUCTS, formatPrice } from "@/data/products";
+import { formatPrice } from "@/data/products";
+import { useAdmin } from "@/context/AdminContext";
 import { useCart } from "@/context/CartContext";
 import { ArrowLeft, ShoppingBag, Truck, ShieldCheck, Heart, ChevronDown, ChevronUp, ChevronRight, Star, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "@/components/ecommerce/ProductCard";
 
 function ProductDetailsPage() {
+  const { products: PRODUCTS } = useAdmin();
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart, setIsCartOpen } = useCart();
@@ -115,9 +117,24 @@ function ProductDetailsPage() {
             </span>
           </div>
           
-          <div className="text-2xl font-serif text-primary mb-8 pb-8 border-b border-border">
+          <div className="text-2xl font-serif text-primary mb-4 pb-4 border-b border-border">
             {formatPrice(product.price)}
             <span className="text-xs font-sans text-muted-foreground ml-3 uppercase tracking-widest">Tax included</span>
+          </div>
+
+          {/* Stock Indicator */}
+          <div className="mb-8 flex items-center gap-2">
+            {product.stock > 0 || product.stock === undefined ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs uppercase tracking-widest font-semibold border border-green-200">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                In Stock {product.stock !== undefined ? `(${product.stock} left)` : ""}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs uppercase tracking-widest font-semibold border border-red-200">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                Out of Stock
+              </span>
+            )}
           </div>
 
           {/* Accordions */}
@@ -208,20 +225,30 @@ function ProductDetailsPage() {
           <div className="flex flex-col sm:flex-row gap-4 mb-10 w-full lg:w-[80%]">
             {/* Animated WhatsApp Water Fill Button */}
             <button
+              disabled={product.stock === 0}
               onClick={() => {
                 addToCart(product, { showToast: false, openCart: true });
               }}
-              className="water-fill-btn flex-1 py-4 text-primary transition rounded-sm uppercase tracking-widest text-xs sm:text-sm font-bold shadow-luxe overflow-hidden relative border border-[#25D366]/50 bg-background"
+              className={`water-fill-btn flex-1 py-4 transition rounded-sm uppercase tracking-widest text-xs sm:text-sm font-bold shadow-luxe overflow-hidden relative border bg-background ${
+                product.stock === 0 
+                  ? "border-gray-200 text-gray-400 cursor-not-allowed opacity-50" 
+                  : "border-[#25D366]/50 text-primary"
+              }`}
             >
-              <span className="relative z-10 flex items-center justify-center gap-2 mix-blend-difference text-white">
+              <span className={`relative z-10 flex items-center justify-center gap-2 ${product.stock === 0 ? "text-gray-400" : "mix-blend-difference text-white"}`}>
                 Buy Now via WhatsApp
               </span>
             </button>
             <button
+              disabled={product.stock === 0}
               onClick={() => addToCart(product, { showToast: true, openCart: true })}
-              className="flex-1 flex items-center justify-center gap-2 py-4 bg-primary text-primary-foreground hover:bg-gold transition rounded-sm uppercase tracking-widest text-xs sm:text-sm font-semibold shadow-sm"
+              className={`flex-1 flex items-center justify-center gap-2 py-4 transition rounded-sm uppercase tracking-widest text-xs sm:text-sm font-semibold shadow-sm ${
+                product.stock === 0 
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed" 
+                  : "bg-primary text-primary-foreground hover:bg-gold"
+              }`}
             >
-              <ShoppingBag size={18} /> Add to Cart
+              <ShoppingBag size={18} /> {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
             </button>
           </div>
 

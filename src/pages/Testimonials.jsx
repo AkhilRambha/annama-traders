@@ -1,63 +1,10 @@
 import { motion } from "framer-motion";
 import { Star, Play, Quote } from "lucide-react";
-
-// Mock data for testimonials
-const reviews = [
-  {
-    id: 1,
-    name: "Sruthi Reddy",
-    location: "Banjara Hills, Hyderabad",
-    type: "video",
-    thumbnail: "https://images.unsplash.com/photo-1583391733958-d259779e5595?w=500&h=700&fit=crop",
-    content: "The home trial experience was completely stress-free. The Kanchi pattu I bought for my wedding is absolutely breathtaking. Highly recommend Annamma Traders to every bride!",
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: "Ananya Rao",
-    location: "Jubilee Hills, Hyderabad",
-    type: "photo",
-    thumbnail: "https://images.unsplash.com/photo-1610030469983-98e550d615ef?w=500&h=500&fit=crop",
-    content: "Beautiful collection of Kalamkari sarees. The texture is pure and the colors are completely natural. I get compliments every time I wear it.",
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: "Kavya Menon",
-    location: "Gachibowli, Hyderabad",
-    type: "text",
-    content: "I was skeptical about buying expensive silk online, but the WhatsApp ordering was so smooth. They sent me videos of the saree before shipping. Excellent service.",
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: "Priya Desai",
-    location: "Madhapur, Hyderabad",
-    type: "video",
-    thumbnail: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&h=700&fit=crop",
-    content: "The Banarasi tissue saree is stunning in person. Thank you for making my anniversary special!",
-    rating: 5,
-  },
-  {
-    id: 5,
-    name: "Meera Krishnan",
-    location: "Secunderabad",
-    type: "photo",
-    thumbnail: "https://images.unsplash.com/photo-1619855562852-c651fc85cbdf?w=500&h=500&fit=crop",
-    content: "I requested a home trial for my mother. The curator was so patient and brought amazing options.",
-    rating: 4,
-  },
-  {
-    id: 6,
-    name: "Lakshmi Sharma",
-    location: "Kondapur, Hyderabad",
-    type: "text",
-    content: "Bought 5 sarees for my daughter's wedding trousseau. Unmatched quality and very reasonable pricing compared to big showrooms.",
-    rating: 5,
-  }
-];
+import { useAdmin } from "@/context/AdminContext";
 
 function TestimonialsPage() {
+  const { reviews } = useAdmin();
+
   return (
     <div className="bg-primary min-h-screen text-primary-foreground">
       <div className="pt-36 pb-24 px-6 lg:px-10 max-w-screen-xl mx-auto">
@@ -86,7 +33,7 @@ function TestimonialsPage() {
             transition={{ duration: 1, delay: 0.6 }}
             className="text-primary-foreground/70 text-lg font-serif italic"
           >
-            See what our brides and customers have to say about their Annamma Traders experience. 
+            See what our brides and customers have to say about their Alankrita experience. 
             Real reviews, real smiles.
           </motion.p>
         </div>
