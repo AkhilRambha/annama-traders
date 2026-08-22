@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, Image as ImageIcon, MessageSquare, Settings, LogOut, Plus, Edit2, Trash2, Save, ShieldCheck, Lock, FileText, Tag } from "lucide-react";
+import { LayoutDashboard, Package, Image as ImageIcon, List, MessageSquare, Settings, LogOut, Plus, Edit2, Trash2, Save, ShieldCheck, Lock, FileText, Tag, Star } from "lucide-react";
 import { useAdmin } from "@/context/AdminContext";
 
 export default function AdminDashboard() {
@@ -10,7 +10,9 @@ export default function AdminDashboard() {
   
   const tabs = [
     { id: "products", name: "Products", icon: Package },
+      { id: "categories", name: "Product Categories", icon: List },
     { id: "offers", name: "Combined Offers", icon: Tag },
+    { id: "specials", name: "Specials Categories", icon: Star },
     { id: "hero", name: "Hero Images", icon: ImageIcon },
     { id: "reviews", name: "Reviews", icon: MessageSquare },
     { id: "legal", name: "Legal Pages", icon: FileText },
@@ -69,7 +71,9 @@ export default function AdminDashboard() {
         </div>
         <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden min-h-[80vh] mt-12">
           {activeTab === "products" && <ProductsManager />}
+          {activeTab === "categories" && <CategoriesManager />}
           {activeTab === "offers" && <OffersManager />}
+          {activeTab === "specials" && <SpecialsManager />}
           {activeTab === "hero" && <HeroManager />}
           {activeTab === "reviews" && <ReviewsManager />}
           {activeTab === "legal" && <LegalManager />}
@@ -137,6 +141,92 @@ function AdminLogin() {
   );
 }
 
+function CategoriesManager() {
+  const { categories, addCategory, updateCategory, deleteCategory } = useAdmin();
+  const [newCategory, setNewCategory] = useState("");
+  const [editingCat, setEditingCat] = useState(null);
+  const [editValue, setEditValue] = useState("");
+
+  const handleAdd = (e) => {
+    e.preventDefault();
+    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
+      addCategory(newCategory.trim());
+      setNewCategory("");
+    }
+  };
+
+  const handleSave = (oldCat) => {
+    if (editValue.trim() && editValue.trim() !== oldCat && !categories.includes(editValue.trim())) {
+      updateCategory(oldCat, editValue.trim());
+    }
+    setEditingCat(null);
+  };
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-serif text-primary">Manage Categories</h2>
+      </div>
+
+      <form onSubmit={handleAdd} className="flex gap-4 mb-8 bg-gray-50 p-4 rounded-lg border border-gray-100">
+        <input 
+          type="text" 
+          value={newCategory}
+          onChange={(e) => setNewCategory(e.target.value)}
+          placeholder="New category name..." 
+          className="flex-1 p-2 border rounded focus:ring-2 focus:ring-primary/20 outline-none"
+          required
+        />
+        <button type="submit" className="bg-primary text-white px-6 py-2 rounded font-medium hover:bg-primary/90 transition-colors flex items-center gap-2">
+          <Plus size={18} /> Add Category
+        </button>
+      </form>
+
+      <div className="space-y-3">
+        {categories.map((cat, i) => (
+          <div key={i} className="flex items-center justify-between p-4 border rounded-lg hover:border-primary/30 transition-colors bg-white shadow-sm">
+            {editingCat === cat ? (
+              <input 
+                type="text"
+                autoFocus
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSave(cat)}
+                className="flex-1 p-1.5 border rounded mr-4 focus:ring-2 focus:ring-primary/20 outline-none"
+              />
+            ) : (
+              <span className="font-medium text-gray-800">{cat}</span>
+            )}
+            
+            <div className="flex items-center gap-2">
+              {editingCat === cat ? (
+                <button onClick={() => handleSave(cat)} className="text-green-600 hover:bg-green-50 p-2 rounded transition-colors" title="Save">
+                  <Save size={18} />
+                </button>
+              ) : (
+                <button 
+                  onClick={() => { setEditingCat(cat); setEditValue(cat); }}
+                  className="text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors" title="Edit"
+                >
+                  <Edit2 size={18} />
+                </button>
+              )}
+              <button onClick={() => deleteCategory(cat)} className="text-red-600 hover:bg-red-50 p-2 rounded transition-colors" title="Delete">
+                <Trash2 size={18} />
+              </button>
+            </div>
+          </div>
+        ))}
+        {categories.length === 0 && (
+          <div className="text-center py-10 text-gray-500 bg-gray-50 rounded-lg border border-dashed">
+            No categories found. Add one above.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ProductsManager() {
   const { products, addProduct, updateProduct, deleteProduct, categories } = useAdmin();
   const [editingId, setEditingId] = useState(null);
@@ -152,11 +242,14 @@ function ProductsManager() {
   const handleAdd = () => {
     setEditingId("new");
     setIsAdding(true);
+    const firstCategory = categories[0];
+    const catName = typeof firstCategory === 'string' ? firstCategory : (firstCategory?.name || firstCategory?.id || '');
+
     setFormData({
       id: "saree-" + Date.now(),
       name: "",
       price: 0,
-      category: categories[0],
+      category: catName,
       image: "",
       description: "",
       isNew: false,
@@ -189,8 +282,8 @@ function ProductsManager() {
           <h3 className="text-lg font-medium mb-4">{isAdding ? "Add New Product" : "Edit Product"}</h3>
           <div className="grid grid-cols-2 gap-4">
             <div><label className="block text-xs font-bold text-gray-600 mb-1">Name</label><input type="text" className="w-full border p-2 rounded" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /></div>
-            <div><label className="block text-xs font-bold text-gray-600 mb-1">Price (₹)</label><input type="number" className="w-full border p-2 rounded" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} /></div>
-            <div><label className="block text-xs font-bold text-gray-600 mb-1">Category</label><select className="w-full border p-2 rounded" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>{categories.map(c => <option key={c}>{c}</option>)}</select></div>
+            <div><label className="block text-xs font-bold text-gray-600 mb-1">Price (â‚¹)</label><input type="number" className="w-full border p-2 rounded" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} /></div>
+            <div><label className="block text-xs font-bold text-gray-600 mb-1">Category</label><select className="w-full border p-2 rounded" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>{categories.map((c, i) => { const cName = typeof c === 'string' ? c : (c.name || c.id || `cat-${i}`); return <option key={cName} value={cName}>{cName}</option>})}</select></div>
             <div><label className="block text-xs font-bold text-gray-600 mb-1">Image URL</label><input type="text" className="w-full border p-2 rounded" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} placeholder="https://..." /></div>
             <div><label className="block text-xs font-bold text-gray-600 mb-1">Stock Quantity</label><input type="number" className="w-full border p-2 rounded" value={formData.stock || 0} onChange={e => setFormData({...formData, stock: Number(e.target.value)})} /></div>
             <div className="flex items-center gap-4 mt-6">
@@ -222,7 +315,7 @@ function ProductsManager() {
               <tr key={p.id} className="hover:bg-gray-50">
                 <td className="p-3"><img src={p.image} className="w-12 h-16 object-cover rounded" alt="" /></td>
                 <td className="p-3 font-medium text-gray-900">{p.name} {p.isNew && <span className="ml-2 text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded">NEW</span>} {p.isFeatured && <span className="ml-2 text-[10px] bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">FEATURED</span>}</td>
-                <td className="p-3 text-gray-600">₹{p.price}</td>
+                <td className="p-3 text-gray-600">â‚¹{p.price}</td>
                 <td className="p-3 text-gray-600">{p.category}</td>
                 <td className="p-3 text-right">
                   <button onClick={() => handleEdit(p)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded mr-2"><Edit2 size={16} /></button>
@@ -238,12 +331,14 @@ function ProductsManager() {
 }
 
 function HeroManager() {
-  const { heroImages, updateHeroImages } = useAdmin();
+  const { heroImages, updateHeroImages, heroStats, updateHeroStats } = useAdmin();
   const [images, setImages] = useState(heroImages);
+  const [stats, setStats] = useState(heroStats || { sareesCurated: "500+", avgExperience: "5", showroomTrips: "0" });
 
   const handleSave = () => {
     updateHeroImages(images);
-    alert("Hero images updated successfully!");
+    updateHeroStats(stats);
+    alert("Hero section updated successfully!");
   };
 
   return (
@@ -272,6 +367,24 @@ function HeroManager() {
             </div>
           </div>
         ))}
+      </div>
+      
+      <div className="mt-10 border-t pt-8">
+        <h3 className="text-xl font-serif text-gray-900 mb-6">Manage Hero Stats</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-xs font-bold text-gray-600 mb-1">Sarees Curated (e.g. 500+)</label>
+            <input type="text" className="w-full border p-2 rounded" value={stats.sareesCurated} onChange={e => setStats({...stats, sareesCurated: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-600 mb-1">Avg. Experience (e.g. 5)</label>
+            <input type="text" className="w-full border p-2 rounded" value={stats.avgExperience} onChange={e => setStats({...stats, avgExperience: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-600 mb-1">Showroom Trips (e.g. 0)</label>
+            <input type="text" className="w-full border p-2 rounded" value={stats.showroomTrips} onChange={e => setStats({...stats, showroomTrips: e.target.value})} />
+          </div>
+        </div>
       </div>
       
       <div className="mt-8 border-t pt-6">
@@ -325,7 +438,7 @@ function ReviewsManager() {
           <div key={r.id} className="p-4 border rounded-md flex justify-between items-start hover:bg-gray-50">
             <div>
               <div className="font-bold text-gray-900">{r.name} <span className="text-sm font-normal text-gray-500 ml-2">{r.location}</span></div>
-              <div className="text-yellow-500 text-sm my-1">{"★".repeat(r.rating)}{"☆".repeat(5-r.rating)}</div>
+              <div className="text-yellow-500 text-sm my-1">{"â˜…".repeat(r.rating)}{"â˜†".repeat(5-r.rating)}</div>
               <p className="text-gray-600 text-sm mt-2 italic">"{r.content}"</p>
             </div>
             <div className="flex gap-2 shrink-0">
@@ -489,3 +602,90 @@ function OffersManager() {
     </div>
   );
 }
+
+function SpecialsManager() {
+  const { specialsCategories, addSpecialCategory, updateSpecialCategory, deleteSpecialCategory } = useAdmin();
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({ id: "", name: "", subtitle: "", desc: "" });
+
+  const resetForm = () => {
+    setFormData({ id: "", name: "", subtitle: "", desc: "" });
+    setEditingId(null);
+  };
+
+  const handleSave = () => {
+    if (!formData.name || !formData.subtitle) return;
+    
+    // Generate an ID if it's new
+    const idToSave = formData.id || formData.name.toLowerCase().replace(/\s+/g, '-');
+    
+    if (editingId) {
+      updateSpecialCategory(editingId, { ...formData, id: idToSave });
+    } else {
+      addSpecialCategory({ ...formData, id: idToSave });
+    }
+    resetForm();
+  };
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-2xl font-serif text-gray-900">Manage Specials Categories</h2>
+          <p className="text-sm text-gray-500 mt-1">IMPORTANT: The "ID/Name" must match your product tags for them to appear!</p>
+        </div>
+        <button onClick={resetForm} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded text-sm hover:bg-primary/90">
+          <Plus size={16} /> New Category
+        </button>
+      </div>
+
+      {/* Form */}
+      <div className="bg-gray-50 p-6 rounded-lg mb-8 border border-gray-200">
+        <h3 className="font-bold mb-4">{editingId ? "Edit Category" : "Add New Category"}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-gray-600 mb-1">ID (used for matching products)</label>
+            <input type="text" placeholder="e.g. Kanchi Pattu" className="w-full border p-2 rounded" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-600 mb-1">Display Name</label>
+            <input type="text" placeholder="e.g. Kanchi Pattu" className="w-full border p-2 rounded" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-bold text-gray-600 mb-1">Subtitle (Gold Script)</label>
+            <input type="text" placeholder="e.g. The temple weave" className="w-full border p-2 rounded" value={formData.subtitle} onChange={e => setFormData({...formData, subtitle: e.target.value})} />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-bold text-gray-600 mb-1">Description</label>
+            <textarea placeholder="Category description..." className="w-full border p-2 rounded" rows={3} value={formData.desc} onChange={e => setFormData({...formData, desc: e.target.value})} />
+          </div>
+        </div>
+        <button onClick={handleSave} className="mt-4 flex items-center gap-2 px-6 py-2 bg-primary text-white rounded font-medium hover:bg-primary/90">
+          <Save size={16} /> Save Category
+        </button>
+      </div>
+
+      {/* List */}
+      <div className="space-y-4">
+        {specialsCategories.map((cat, idx) => {
+          const catId = typeof cat.id === 'string' ? cat.id : (cat.id?.id || `unknown-${idx}`);
+          return (
+            <div key={catId} className="flex items-center gap-4 p-4 border rounded-lg bg-white">
+              <div className="flex-1">
+                <h3 className="font-bold text-lg">{cat.name} <span className="text-xs text-gray-500 font-normal bg-gray-100 px-2 py-1 rounded ml-2">ID: {catId}</span></h3>
+                <p className="text-gold font-script text-lg my-1">{cat.subtitle}</p>
+                <p className="text-gray-600 text-sm mt-1">{cat.desc}</p>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => { setFormData(cat); setEditingId(catId); }} className="p-2 text-blue-600 bg-blue-50 rounded hover:bg-blue-100"><Edit2 size={16} /></button>
+                <button onClick={() => deleteSpecialCategory(catId)} className="p-2 text-red-600 bg-red-50 rounded hover:bg-red-100"><Trash2 size={16} /></button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+

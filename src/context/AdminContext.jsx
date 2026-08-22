@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+﻿import React, { createContext, useContext, useState, useEffect } from "react";
 import { PRODUCTS, CATEGORIES } from "@/data/products";
 
 // Default Hero Images (using imported static assets temporarily)
@@ -67,7 +67,7 @@ const defaultContactInfo = {
   phone: "+91 86886 32684",
   email: "annammatraders98@gmail.com",
   address: "Nagole, Hyderabad, Telangana",
-  hours: "Mon – Sat · 9:00 AM to 9:00 PM"
+  hours: "Mon Ã¢â‚¬â€œ Sat Ã‚Â· 9:00 AM to 9:00 PM"
 };
 
 const defaultLegalPages = {
@@ -86,10 +86,23 @@ const defaultOffers = [
   {
     id: "offer-2",
     title: "Festive Gold Offer",
-    description: "Flat ₹5,000 off when you buy 2 or more Banarasi Silks.",
+    description: "Flat Ã¢â€šÂ¹5,000 off when you buy 2 or more Banarasi Silks.",
     image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop",
     isActive: true
   }
+];
+
+const defaultHeroStats = {
+  sareesCurated: "500+",
+  avgExperience: "5",
+  showroomTrips: "0"
+};
+
+const defaultSpecialsCategories = [
+  { id: "Kanchi Pattu", name: "Kanchi Pattu", subtitle: "The temple weave", desc: "Pure mulberry silk and zari from the looms of Kanchipuram. Heirloom drapes meant to outlive trends." },
+  { id: "Banarasi Silk", name: "Banarasi & Bridal", subtitle: "The royal drape", desc: "Intricate brocades and rich silks woven in the holy city of Varanasi, perfect for grand celebrations." },
+  { id: "Designer Sarees", name: "Designer Party Wear", subtitle: "Modern elegance", desc: "Contemporary silhouettes and embellished details for the modern woman's festive wardrobe." },
+  { id: "Kalamkari", name: "Kalamkari", subtitle: "Art on fabric", desc: "Hand-painted and block-printed stories on pure silk, showcasing the ancient art form of Andhra." },
 ];
 
 const AdminContext = createContext();
@@ -109,7 +122,12 @@ export function AdminProvider({ children }) {
 
   const [categories, setCategories] = useState(() => {
     const saved = localStorage.getItem("admin_categories");
-    return saved ? JSON.parse(saved) : CATEGORIES;
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Ensure it's an array of strings (cleanup any corrupted data)
+      let clean = parsed.map(c => typeof c === 'string' ? c : (c.name || c.id || 'Unknown')); if (!clean.includes('Jewellery')) clean.push('Jewellery'); return clean;
+    }
+    return CATEGORIES;
   });
 
   const [heroImages, setHeroImages] = useState(() => {
@@ -137,6 +155,16 @@ export function AdminProvider({ children }) {
     return saved ? JSON.parse(saved) : defaultOffers;
   });
 
+  const [heroStats, setHeroStats] = useState(() => {
+    const saved = localStorage.getItem("admin_heroStats");
+    return saved ? JSON.parse(saved) : defaultHeroStats;
+  });
+
+  const [specialsCategories, setSpecialsCategories] = useState(() => {
+    const saved = localStorage.getItem("admin_specialsCategories");
+    return saved ? JSON.parse(saved) : defaultSpecialsCategories;
+  });
+
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return sessionStorage.getItem("admin_auth") === "true";
   });
@@ -149,12 +177,24 @@ export function AdminProvider({ children }) {
   useEffect(() => { localStorage.setItem("admin_contactInfo", JSON.stringify(contactInfo)); }, [contactInfo]);
   useEffect(() => { localStorage.setItem("admin_legalPages", JSON.stringify(legalPages)); }, [legalPages]);
   useEffect(() => { localStorage.setItem("admin_offers", JSON.stringify(offers)); }, [offers]);
+  useEffect(() => {
+    localStorage.setItem("admin_heroStats", JSON.stringify(heroStats));
+  }, [heroStats]);
+
+  useEffect(() => {
+    localStorage.setItem("admin_specialsCategories", JSON.stringify(specialsCategories));
+  }, [specialsCategories]);
 
   // --- ACTIONS ---
   // Products
   const addProduct = (product) => setProducts([product, ...products]);
   const updateProduct = (id, updatedProduct) => setProducts(products.map(p => p.id === id ? updatedProduct : p));
   const deleteProduct = (id) => setProducts(products.filter(p => p.id !== id));
+
+  // Categories
+  const addCategory = (category) => setCategories([...categories, category]);
+  const updateCategory = (oldCategory, newCategory) => setCategories(categories.map(c => c === oldCategory ? newCategory : c));
+  const deleteCategory = (category) => setCategories(categories.filter(c => c !== category));
 
   // Hero Images
   const updateHeroImages = (newImages) => setHeroImages(newImages);
@@ -175,6 +215,14 @@ export function AdminProvider({ children }) {
   const updateOffer = (id, updatedOffer) => setOffers(offers.map(o => o.id === id ? updatedOffer : o));
   const deleteOffer = (id) => setOffers(offers.filter(o => o.id !== id));
 
+  // Hero Stats
+  const updateHeroStats = (stats) => setHeroStats(stats);
+
+  // Specials Categories
+  const addSpecialCategory = (category) => setSpecialsCategories([...specialsCategories, category]);
+  const updateSpecialCategory = (id, updated) => setSpecialsCategories(specialsCategories.map(c => c.id === id ? updated : c));
+  const deleteSpecialCategory = (id) => setSpecialsCategories(specialsCategories.filter(c => c.id !== id));
+
   // Auth
   const login = (username, password) => {
     if (username === "admin" && password === "admin@alankrita") {
@@ -193,12 +241,14 @@ export function AdminProvider({ children }) {
   return (
     <AdminContext.Provider value={{
       products, addProduct, updateProduct, deleteProduct,
-      categories,
+      categories, addCategory, updateCategory, deleteCategory,
       heroImages, updateHeroImages,
       reviews, addReview, updateReview, deleteReview,
       contactInfo, updateContactInfo,
       legalPages, updateLegalPages,
       offers, addOffer, updateOffer, deleteOffer,
+      heroStats, updateHeroStats,
+      specialsCategories, addSpecialCategory, updateSpecialCategory, deleteSpecialCategory,
       isAuthenticated, login, logout
     }}>
       {children}
@@ -207,3 +257,7 @@ export function AdminProvider({ children }) {
 }
 
 export const useAdmin = () => useContext(AdminContext);
+
+
+
+

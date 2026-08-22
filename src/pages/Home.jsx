@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Sparkles, Home as HomeIcon, Calendar, Heart, ShoppingBag, Star, Quote } from "lucide-react";
+import { ArrowRight, Sparkles, Home as HomeIcon, Calendar, Heart, ShoppingBag, Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { ProductCard } from "@/components/ecommerce/ProductCard";
 import { useAdmin } from "@/context/AdminContext";
@@ -24,7 +24,11 @@ function HomePage() {
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
-  const { products, heroImages, categories: CATEGORIES, offers } = useAdmin();
+  const { products, heroImages, categories: CATEGORIES, offers, heroStats, reviews } = useAdmin();
+  const [currentReviewIdx, setCurrentReviewIdx] = useState(0);
+
+  const nextReview = () => setCurrentReviewIdx((prev) => (prev + 1) % (reviews?.length || 1));
+  const prevReview = () => setCurrentReviewIdx((prev) => (prev - 1 + (reviews?.length || 1)) % (reviews?.length || 1));
 
   const featuredProducts = products.filter(p => p.isFeatured).slice(0, 4);
   const newArrivals = products.filter(p => p.isNew).slice(0, 4);
@@ -38,7 +42,7 @@ function HomePage() {
     const legacyInterval = setInterval(() => {
       setLegacyImgIdx((prev) => (prev + 1) % legacyImages.length);
     }, 4000);
-    
+
     const heroInterval = setInterval(() => {
       setHeroImgIdx((prev) => (prev + 1) % heroImages.length);
     }, 3500);
@@ -75,7 +79,7 @@ function HomePage() {
             <motion.div variants={fadeUp} className="flex items-center gap-3 mb-8">
               <span className="h-px w-12 bg-accent" />
               <span className="text-xs uppercase tracking-[0.4em] text-accent font-semibold">
-                New Collection Out Now
+                SINCE 2020 • HYDERABAD
               </span>
             </motion.div>
 
@@ -85,14 +89,15 @@ function HomePage() {
               transition={{ duration: 1, delay: 0.2 }}
               className="font-serif text-4xl md:text-6xl xl:text-7xl leading-[1.05] text-balance mb-6"
             >
-              Exquisite drapes for every <br/>
-              <motion.span 
+              The saree <br />
+              showroom that <br />
+              <motion.span
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.8, type: "spring" }}
-                className="font-script gold-text block mt-2 text-5xl md:text-7xl xl:text-8xl ml-8"
+                className="font-script gold-text block mt-2 text-5xl md:text-7xl xl:text-8xl"
               >
-                occasion.
+                comes home.
               </motion.span>
             </motion.h1>
 
@@ -100,18 +105,38 @@ function HomePage() {
               variants={fadeUp}
               className="max-w-xl text-lg text-primary-foreground/80 leading-relaxed font-serif italic mb-10"
             >
-              Shop our curated collection of Banarasi, Kanchi Pattu, and Kalamkari sarees online. 
-              Authentic Indian craftsmanship delivered directly to your doorstep.
+              Hand-picked pattu, soft silk, kalamkari and designer drapes — unfurled across your living room, chosen at your own pace, over a cup of chai.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-4 mb-16">
               <Link
-                to="/collections"
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-accent text-accent-foreground rounded-full text-sm uppercase tracking-[0.2em] shadow-luxe hover:bg-accent/90 transition"
+                to="/contact"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-accent text-primary rounded-full text-xs uppercase tracking-[0.2em] shadow-luxe hover:bg-accent/90 transition font-bold"
               >
-                Shop Collection
+                BOOK HOME APPOINTMENT
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition" />
               </Link>
+              <Link
+                to="/collections"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-transparent border border-accent text-accent rounded-full text-xs uppercase tracking-[0.2em] shadow-luxe hover:bg-accent/10 transition font-bold"
+              >
+                VIEW COLLECTIONS
+              </Link>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-8 md:gap-16">
+              <div>
+                <div className="font-serif text-2xl md:text-3xl text-accent mb-1">{heroStats?.sareesCurated || "500+"}</div>
+                <div className="text-[9px] uppercase tracking-[0.2em] text-primary-foreground/60 font-semibold">SAREES CURATED</div>
+              </div>
+              <div>
+                <div className="font-serif text-2xl md:text-3xl text-accent mb-1 flex items-center gap-1">{heroStats?.avgExperience || "5"}★</div>
+                <div className="text-[9px] uppercase tracking-[0.2em] text-primary-foreground/60 font-semibold">AVG. EXPERIENCE</div>
+              </div>
+              <div>
+                <div className="font-serif text-2xl md:text-3xl text-accent mb-1">{heroStats?.showroomTrips || "0"}</div>
+                <div className="text-[9px] uppercase tracking-[0.2em] text-primary-foreground/60 font-semibold">SHOWROOM TRIPS</div>
+              </div>
             </motion.div>
           </motion.div>
 
@@ -121,7 +146,7 @@ function HomePage() {
               const pos = (i - heroImgIdx + heroImages.length) % heroImages.length;
               const isCenter = pos === 0;
               const isRight = pos === 1;
-              
+
               return (
                 <motion.div
                   key={i}
@@ -134,7 +159,7 @@ function HomePage() {
                     zIndex: isCenter ? 30 : 10,
                   }}
                   transition={{ duration: 0.8, ease: "easeInOut" }}
-                  className="absolute top-12 left-1/2 w-64 h-[420px] rounded-sm overflow-hidden shadow-luxe border border-gold/40 origin-center"
+                  className="absolute top-12 left-1/2 w-64 h-[340px] rounded-sm overflow-hidden shadow-luxe border-4 border-gold border-solid origin-center"
                 >
                   <div className={`absolute inset-0 bg-black/30 z-10 transition-opacity duration-1000 ${isCenter ? 'opacity-0' : 'opacity-100'}`} />
                   <img src={img} alt="Hero Saree" className="w-full h-full object-cover" />
@@ -144,15 +169,15 @@ function HomePage() {
           </div>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }} 
-          animate={{ opacity: 1 }} 
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 text-accent/60 text-xs uppercase tracking-[0.4em] flex flex-col items-center gap-2"
         >
           Scroll to explore
-          <motion.div 
-            animate={{ y: [0, 8, 0] }} 
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
             className="w-px h-12 bg-accent/40"
           />
@@ -174,28 +199,178 @@ function HomePage() {
         </div>
       </section>
 
-      {/* SHOP BY OCCASION */}
-      <section className="py-20 lg:py-28 max-w-screen-2xl mx-auto px-6 lg:px-10">
-        <div className="text-center mb-16">
-          <div className="text-xs uppercase tracking-[0.4em] text-gold-deep mb-4">Curated Edits</div>
-          <h2 className="font-serif text-4xl md:text-5xl text-primary">Shop by <em className="font-script gold-text not-italic">Occasion</em></h2>
-        </div>
-        <div className="flex overflow-x-auto md:grid md:grid-cols-4 gap-4 md:gap-8 pb-6 hide-scrollbar snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0">
-          {[
-            { title: "Bridal Heirloom", img: bridal },
-            { title: "Festive Grace", img: silk },
-            { title: "Evening Soiree", img: designer },
-            { title: "Temple Rituals", img: traditional }
-          ].map((occ, i) => (
-            <Link key={i} to="/collections" className="group block relative aspect-[3/4] w-[200px] md:w-auto flex-shrink-0 md:flex-shrink snap-start overflow-hidden rounded-sm border border-border/50 shadow-sm hover:shadow-luxe transition-all">
-              <img src={occ.img} alt={occ.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-primary-foreground">
-                <span className="font-serif text-lg md:text-xl tracking-wide group-hover:text-gold transition-colors">{occ.title}</span>
-                <ArrowRight size={16} className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-gold" />
+      {/* OUR STORY / HOW IT WORKS */}
+      <section className="py-16 lg:py-20 max-w-7xl mx-auto px-6 lg:px-10 overflow-hidden">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+          {/* Images */}
+          <div className="relative pl-6 lg:pl-8 w-11/12 md:w-4/5 lg:w-[85%] mx-auto lg:mx-0">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="relative rounded-sm overflow-hidden shadow-luxe"
+            >
+              <img src={traditional} alt="Our Story" className="w-full h-auto aspect-[3/4] object-cover" />
+
+              <div className="absolute top-10 -left-6 lg:-left-12 pointer-events-none">
+                <span className="font-script text-7xl lg:text-8xl text-gold/80 leading-none drop-shadow-md">est.<br />2020</span>
               </div>
-            </Link>
-          ))}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="absolute -bottom-8 -right-4 lg:-right-8 w-2/3 max-w-[180px] lg:max-w-[200px] rounded-sm overflow-hidden border-[6px] border-background shadow-luxe z-10"
+            >
+              <img src={bridal} alt="Happy Bride" className="w-full h-auto aspect-square object-cover" />
+            </motion.div>
+          </div>
+
+          {/* Content */}
+          <div className="pt-16 lg:pt-0">
+            <div className="text-xs uppercase tracking-[0.4em] text-gold-deep mb-6 flex items-center gap-4">
+              <span className="w-6 h-px bg-gold-deep"></span> OUR STORY
+            </div>
+
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-primary mb-8 leading-[1.1]">
+              Tradition, woven into <em className="font-script gold-text not-italic">every visit.</em>
+            </h2>
+
+            <p className="text-foreground/80 text-lg leading-relaxed mb-10">
+              For six years, Alankrita (Annamma Traders) has been a quiet rebellion against crowded showrooms and fluorescent lights. We bring a hand-picked trunk of pattu, silk and designer sarees to your home — and stay until the right one finds you.
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-x-6 gap-y-8">
+              <div className="flex gap-4 items-start">
+                <div className="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold shrink-0">
+                  <HomeIcon size={18} />
+                </div>
+                <div>
+                  <h4 className="font-serif text-lg text-primary mb-1">Home doorstep</h4>
+                  <p className="text-sm text-foreground/60 leading-relaxed">We come to you, anywhere in Hyderabad.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start">
+                <div className="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold shrink-0">
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <h4 className="font-serif text-lg text-primary mb-1">Hand-curated</h4>
+                  <p className="text-sm text-foreground/60 leading-relaxed">Each saree vetted for craft and drape.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start">
+                <div className="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold shrink-0">
+                  <Heart size={18} />
+                </div>
+                <div>
+                  <h4 className="font-serif text-lg text-primary mb-1">Unhurried</h4>
+                  <p className="text-sm text-foreground/60 leading-relaxed">Try as many as you like, judgement-free.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start">
+                <div className="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold shrink-0">
+                  <ShoppingBag size={18} />
+                </div>
+                <div>
+                  <h4 className="font-serif text-lg text-primary mb-1">Pay only for kept</h4>
+                  <p className="text-sm text-foreground/60 leading-relaxed">No pressure, no obligation.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* FOUR STEPS SECTION */}
+      <section className="relative py-16 lg:py-20 bg-[#5a0c10] overflow-hidden text-white">
+        <div className="absolute inset-0 z-0">
+          <img src={shopBg} alt="Background" className="w-full h-full object-cover opacity-20 mix-blend-multiply grayscale" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="flex flex-col items-center text-center mb-12 lg:mb-16">
+            <Sparkles size={20} className="text-gold mb-6" />
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white">
+              A showroom in four <em className="font-script gold-text not-italic block mt-2 lg:inline lg:mt-0">gentle steps.</em>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {/* Step 1 */}
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ type: "spring", stiffness: 50, duration: 0.8, delay: 0.1 }}
+              className="bg-white/5 backdrop-blur-md border border-gold/30 p-8 rounded-lg hover:border-gold/70 hover:bg-white/10 transition-all shadow-xl flex flex-col items-center text-center group"
+            >
+              <div className="w-16 h-16 rounded-full border border-gold/40 flex items-center justify-center mb-8 text-gold bg-black/20 group-hover:scale-110 transition-transform duration-500">
+                <Calendar size={24} />
+              </div>
+              <h4 className="font-serif text-white text-2xl mb-4 flex items-center justify-center gap-3 w-full">
+                 <span className="text-gold/60 text-base font-light font-sans tracking-widest">01</span> Book
+              </h4>
+              <p className="text-white/70 text-sm leading-relaxed">Tell us your date, occasion and style on WhatsApp.</p>
+            </motion.div>
+
+            {/* Step 2 */}
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ type: "spring", stiffness: 50, duration: 0.8, delay: 0.2 }}
+              className="bg-white/5 backdrop-blur-md border border-gold/30 p-8 rounded-lg hover:border-gold/70 hover:bg-white/10 transition-all shadow-xl flex flex-col items-center text-center group"
+            >
+              <div className="w-16 h-16 rounded-full border border-gold/40 flex items-center justify-center mb-8 text-gold bg-black/20 group-hover:scale-110 transition-transform duration-500">
+                <HomeIcon size={24} />
+              </div>
+              <h4 className="font-serif text-white text-2xl mb-4 flex items-center justify-center gap-3 w-full">
+                 <span className="text-gold/60 text-base font-light font-sans tracking-widest">02</span> We visit
+              </h4>
+              <p className="text-white/70 text-sm leading-relaxed">A curator arrives with a trunk of hand-picked sarees.</p>
+            </motion.div>
+
+            {/* Step 3 */}
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ type: "spring", stiffness: 50, duration: 0.8, delay: 0.3 }}
+              className="bg-white/5 backdrop-blur-md border border-gold/30 p-8 rounded-lg hover:border-gold/70 hover:bg-white/10 transition-all shadow-xl flex flex-col items-center text-center group"
+            >
+              <div className="w-16 h-16 rounded-full border border-gold/40 flex items-center justify-center mb-8 text-gold bg-black/20 group-hover:scale-110 transition-transform duration-500">
+                <Heart size={24} />
+              </div>
+              <h4 className="font-serif text-white text-2xl mb-4 flex items-center justify-center gap-3 w-full">
+                 <span className="text-gold/60 text-base font-light font-sans tracking-widest">03</span> Select
+              </h4>
+              <p className="text-white/70 text-sm leading-relaxed">Drape, try, photograph — take your time, no pressure.</p>
+            </motion.div>
+
+            {/* Step 4 */}
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ type: "spring", stiffness: 50, duration: 0.8, delay: 0.4 }}
+              className="bg-white/5 backdrop-blur-md border border-gold/30 p-8 rounded-lg hover:border-gold/70 hover:bg-white/10 transition-all shadow-xl flex flex-col items-center text-center group"
+            >
+              <div className="w-16 h-16 rounded-full border border-gold/40 flex items-center justify-center mb-8 text-gold bg-black/20 group-hover:scale-110 transition-transform duration-500">
+                <ShoppingBag size={24} />
+              </div>
+              <h4 className="font-serif text-white text-2xl mb-4 flex items-center justify-center gap-3 w-full">
+                 <span className="text-gold/60 text-base font-light font-sans tracking-widest">04</span> Keep
+              </h4>
+              <p className="text-white/70 text-sm leading-relaxed">Pay only for the ones that came home to your wardrobe.</p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -267,7 +442,7 @@ function HomePage() {
               <div key={offer.id} className="group relative overflow-hidden rounded-lg aspect-[16/9] md:aspect-[3/2] flex flex-col justify-end p-8 shadow-sm">
                 <img src={offer.image} alt={offer.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                
+
                 <div className="relative z-10 text-white">
                   <h3 className="font-serif text-2xl md:text-3xl mb-2 text-gold">{offer.title}</h3>
                   <p className="font-light text-sm md:text-base opacity-90 max-w-sm mb-6">{offer.description}</p>
@@ -284,7 +459,7 @@ function HomePage() {
       {/* UNIQUE CRAFT SECTION */}
       <section className="relative py-16 md:py-20 overflow-hidden bg-primary text-primary-foreground">
         <div className="max-w-screen-2xl mx-auto px-6 lg:px-10 grid lg:grid-cols-2 gap-12 md:gap-16 items-center">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -292,13 +467,12 @@ function HomePage() {
             className="relative h-[300px] md:h-[450px] lg:aspect-[4/3] w-full overflow-hidden rounded-sm bg-maroon-deep"
           >
             {legacyImages.map((img, idx) => (
-              <img 
+              <img
                 key={idx}
-                src={img} 
-                alt="Craftsmanship" 
-                className={`absolute inset-0 w-full h-full object-contain mix-blend-luminosity transition-opacity duration-1000 ${
-                  idx === legacyImgIdx ? "opacity-80" : "opacity-0"
-                }`} 
+                src={img}
+                alt="Craftsmanship"
+                className={`absolute inset-0 w-full h-full object-contain mix-blend-luminosity transition-opacity duration-1000 ${idx === legacyImgIdx ? "opacity-80" : "opacity-0"
+                  }`}
               />
             ))}
             <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent z-10" />
@@ -306,18 +480,18 @@ function HomePage() {
               <div className="text-gold font-serif italic text-xl md:text-2xl mb-1">"Every thread tells a story of heritage."</div>
               <div className="text-[10px] md:text-xs uppercase tracking-widest text-primary-foreground/70">— Master Weavers</div>
             </div>
-            
+
             {/* Carousel Indicators */}
             <div className="absolute top-4 right-4 flex gap-2 z-20">
               {legacyImages.map((_, idx) => (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className={`h-1 rounded-full transition-all duration-500 ${idx === legacyImgIdx ? 'w-6 bg-gold' : 'w-2 bg-white/30'}`}
                 />
               ))}
             </div>
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -333,91 +507,6 @@ function HomePage() {
               Discover Our Story
             </Link>
           </motion.div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="relative py-28 overflow-hidden">
-        <div className="absolute inset-0 gradient-royal" />
-        <div
-          className="absolute inset-0 opacity-25"
-          style={{
-            backgroundImage: `url(${shopBg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            mixBlendMode: "overlay",
-          }}
-        />
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-10 text-primary-foreground">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="divider-ornament text-accent mb-6">
-              <Sparkles size={14} />
-            </div>
-            <h2 className="font-serif text-5xl md:text-6xl">
-              A showroom in four <em className="font-script gold-text not-italic">gentle steps.</em>
-            </h2>
-          </div>
-
-          <div className="mt-20 relative">
-            {/* Connecting Line (Desktop) */}
-            <div className="hidden md:block absolute top-[40px] left-[10%] right-[10%] h-[1px] border-t border-dashed border-gold/40" />
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 relative z-10">
-              {[
-                {
-                  n: "01",
-                  icon: ShoppingBag,
-                  t: "Shop Online",
-                  d: "Add your favorite sarees to cart directly from our collections.",
-                },
-                {
-                  n: "02",
-                  icon: Calendar,
-                  t: "Checkout",
-                  d: "Provide your delivery details securely. No immediate payment required.",
-                },
-                {
-                  n: "03",
-                  icon: HomeIcon,
-                  t: "We Deliver",
-                  d: "Your order is dispatched and delivered safely to your doorstep.",
-                },
-                {
-                  n: "04",
-                  icon: Heart,
-                  t: "Pay on Delivery",
-                  d: "Review your purchase and pay comfortably upon receiving.",
-                },
-              ].map(({ n, icon: Icon, t, d }, index) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.7, delay: index * 0.2, type: "spring", stiffness: 100 }}
-                  key={n}
-                  className={`relative flex flex-col items-center text-center group ${
-                    index % 2 === 0 ? "md:translate-y-0" : "md:translate-y-12"
-                  }`}
-                >
-                  {/* Circle Icon */}
-                  <div className="w-20 h-20 rounded-full bg-maroon-deep border border-gold/40 flex items-center justify-center mb-8 shadow-luxe group-hover:scale-110 group-hover:border-gold transition-all duration-500 relative z-10">
-                    <Icon size={28} className="text-accent group-hover:text-gold transition-colors duration-500" />
-                    
-                    {/* Step Number Badge */}
-                    <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-gold text-primary text-[10px] font-bold flex items-center justify-center shadow-md">
-                      {n}
-                    </div>
-                  </div>
-                  
-                  {/* Card Content */}
-                  <div className="bg-background/10 backdrop-blur-md border border-white/10 p-6 lg:p-8 rounded-sm shadow-xl group-hover:bg-background/20 transition-all w-full flex-1">
-                    <h3 className="font-serif text-2xl mb-3 text-gold-deep group-hover:text-gold transition-colors">{t}</h3>
-                    <p className="text-sm text-primary-foreground/80 leading-relaxed font-light">{d}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -446,34 +535,50 @@ function HomePage() {
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="py-28 bg-maroon-deep text-primary-foreground overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex items-center justify-between mb-16">
-            <div>
-              <div className="text-xs uppercase tracking-[0.4em] text-gold mb-4">Words of Love</div>
-              <h2 className="font-serif text-4xl md:text-5xl">Our <em className="font-script text-gold not-italic">Brides & Patrons</em></h2>
+      <section className="py-20 lg:py-28 bg-maroon-deep text-primary-foreground overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-full bg-black/10 pointer-events-none" />
+        <div className="max-w-4xl mx-auto px-6 lg:px-10 relative z-10">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <span className="w-8 md:w-12 h-px bg-gold"></span>
+              <span className="text-xs uppercase tracking-[0.4em] text-gold">Words of Love</span>
+              <span className="w-8 md:w-12 h-px bg-gold"></span>
             </div>
-            <Quote className="text-gold/20 w-20 h-20 hidden md:block" />
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl">Our <em className="font-script text-gold not-italic">Brides & Patrons</em></h2>
           </div>
 
-          <div className="flex overflow-x-auto gap-6 pb-8 hide-scrollbar snap-x snap-mandatory -mx-6 px-6 lg:mx-0 lg:px-0">
-            {[
-              { name: "Priya Reddy", location: "Hyderabad", text: "The Kanchi Pattu I bought for my sister's wedding was absolutely stunning. The quality of the zari is unmatched, and the home trial made deciding so easy." },
-              { name: "Ananya Sharma", location: "Mumbai", text: "Alankrita feels like a closely guarded secret. The Banarasi silk drapes like a dream. Thank you for preserving such authentic craftsmanship." },
-              { name: "Lakshmi Iyer", location: "Chennai", text: "I've purchased three sarees from their designer collection. Each piece is a masterpiece. The packaging and delivery were flawless." }
-            ].map((test, i) => (
-              <div key={i} className="min-w-[280px] md:min-w-[400px] bg-background/5 border border-white/10 p-8 rounded-sm snap-start backdrop-blur-sm">
-                <div className="flex gap-1 mb-6">
-                  {[1,2,3,4,5].map(s => <Star key={s} size={14} className="fill-gold text-gold" />)}
+          {reviews && reviews.length > 0 && (
+            <div className="relative">
+              <motion.div 
+                key={currentReviewIdx}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white/5 border border-white/10 p-6 lg:p-8 rounded-2xl backdrop-blur-sm shadow-2xl flex flex-col items-center text-center mx-auto"
+              >
+                <Quote className="w-10 h-10 text-gold/20 mb-4" />
+                <div className="flex gap-1 mb-4">
+                  {Array.from({ length: reviews[currentReviewIdx].rating || 5 }).map((_, s) => <Star key={s} size={14} className="fill-gold text-gold" />)}
                 </div>
-                <p className="font-serif text-lg leading-relaxed text-primary-foreground/90 italic mb-8">"{test.text}"</p>
-                <div className="mt-auto">
-                  <div className="text-sm font-semibold tracking-wider uppercase text-gold">{test.name}</div>
-                  <div className="text-xs text-primary-foreground/50 tracking-widest uppercase mt-1">{test.location}</div>
+                <p className="font-serif text-base lg:text-lg leading-relaxed text-white/90 italic mb-6">"{reviews[currentReviewIdx].content}"</p>
+                <div className="mt-auto border-t border-white/10 pt-4 w-full">
+                  <div className="text-sm font-semibold tracking-widest uppercase text-gold">{reviews[currentReviewIdx].name}</div>
+                  <div className="text-[10px] text-white/50 tracking-[0.2em] uppercase mt-1">{reviews[currentReviewIdx].location}</div>
                 </div>
+              </motion.div>
+
+              {/* Carousel Controls */}
+              <div className="flex justify-center gap-4 mt-8">
+                <button onClick={prevReview} className="p-3 rounded-full border border-gold/30 text-gold hover:bg-gold hover:text-maroon-deep transition-colors">
+                  <ChevronLeft size={20} />
+                </button>
+                <button onClick={nextReview} className="p-3 rounded-full border border-gold/30 text-gold hover:bg-gold hover:text-maroon-deep transition-colors">
+                  <ChevronRight size={20} />
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 

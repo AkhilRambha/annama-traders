@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { Menu, X, ShoppingBag, ChevronDown, Search } from "lucide-react";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.png";
 import { useCart } from "@/context/CartContext";
 import { CATEGORIES } from "@/data/products";
 import { motion, AnimatePresence } from "framer-motion";
@@ -66,10 +66,6 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 inset-x-0 z-40">
-      {/* Top Announcement Bar */}
-      <div className="bg-primary text-primary-foreground text-center text-xs uppercase tracking-widest py-2 px-4 transition-all duration-300 relative z-50">
-        Free home delivery across Hyderabad on orders over ₹10,000
-      </div>
 
       <div
         className={`w-full transition-all duration-500 ${scrolled
@@ -90,11 +86,11 @@ export function Navbar() {
           {/* Left: Logo */}
           <div className="flex-1 flex items-center justify-center lg:justify-start gap-3">
             <Link to="/" onClick={closeMenus} className="flex items-center gap-3 group">
-              <img src={logo} alt="Alankrita Silks Logo" className="h-12 md:h-16 object-contain mix-blend-multiply" onError={(e) => {
+              <img src={logo} alt="Alankrita Silks Logo" className="h-12 w-12 md:h-16 md:w-16 object-cover mix-blend-multiply rounded-full" onError={(e) => {
                 e.target.style.display = 'none';
               }} />
               <div className="leading-none flex flex-col justify-center pt-1">
-                <div className="font-serif text-2xl tracking-widest text-foreground">Alankrita</div>
+                <div className="font-serif text-2xl tracking-widest text-primary font-bold">Alankrita</div>
                 <div className="text-[9px] uppercase tracking-[0.2em] text-gold-deep mt-1 font-semibold">
                   A BRAND OF ANNAMMA TRADERS
                 </div>
@@ -189,6 +185,17 @@ export function Navbar() {
                     }`}
                 >
                   Jewellery
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/specials"
+                  onClick={closeMenus}
+                  className={`relative text-xs uppercase tracking-widest transition-colors ${location.pathname === "/specials" ? "text-primary font-bold" : "text-foreground/70 hover:text-primary"
+                    }`}
+                >
+                  Specials
                 </Link>
               </li>
 
@@ -359,6 +366,14 @@ export function Navbar() {
                       className="text-2xl font-serif text-gold-deep hover:text-gold transition mt-4 pt-4 border-t border-border"
                     >
                       Exquisite Jewellery
+                    </Link>
+
+                    <Link
+                      to="/specials"
+                      onClick={closeMenus}
+                      className="text-2xl font-serif text-gold-deep hover:text-gold transition mt-2"
+                    >
+                      Specials
                     </Link>
                   </div>
                 </li>

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, Grid, ShoppingBag } from "lucide-react";
+import { Home, Search, Grid, ShoppingBag, Star } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export function BottomNav() {
@@ -9,6 +9,7 @@ export function BottomNav() {
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: Grid, label: "Categories", path: "/collections" },
+    { icon: Star, label: "Specials", path: "/specials" },
     { icon: Search, label: "Search", path: "/collections?q=" }, // or a dedicated search UI
   ];
 

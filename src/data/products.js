@@ -21,6 +21,7 @@ export const CATEGORIES = [
   "Banarasi Silk",
   "Soft Silk",
   "Cotton Silk",
+  "Jewellery",
   "Bridal Collection",
   "Fancy Sarees",
   "Jewellery"
@@ -160,7 +161,7 @@ export const PRODUCTS = [
     name: "Antique Gold Temple Choker",
     price: 45000,
     category: "Jewellery",
-    image: "https://images.unsplash.com/photo-1599643477874-5c866f466b89?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=2000&auto=format&fit=crop",
     isFeatured: true,
     stock: 2,
     description: "An exquisite antique-finished gold temple choker featuring intricate Goddess Lakshmi motifs, studded with rubies and emeralds. A masterpiece of South Indian craftsmanship.",
@@ -203,3 +204,7 @@ export const formatPrice = (price) => {
     maximumFractionDigits: 0
   }).format(price);
 };
+
+
+// reload HMR
+

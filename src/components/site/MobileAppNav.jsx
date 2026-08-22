@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, LayoutGrid, ShoppingBag, User } from "lucide-react";
+import { Home, Search, LayoutGrid, ShoppingBag, User, Star } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export function MobileAppNav() {
@@ -9,8 +9,8 @@ export function MobileAppNav() {
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
-    { icon: Search, label: "Search", path: "/collections?focus=search" },
     { icon: LayoutGrid, label: "Categories", path: "/collections" },
+    { icon: Star, label: "Specials", path: "/specials" },
     { icon: ShoppingBag, label: "Cart", action: () => setIsCartOpen(true) },
     { icon: User, label: "Admin", path: "/admin" },
   ];

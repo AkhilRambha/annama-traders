@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Jewellery from "./pages/Jewellery";
+import Specials from "./pages/Specials";
 import "./styles.css";
 
 import { CartProvider } from "./context/CartContext";
@@ -35,6 +36,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/specials" element={<Specials />} />
             <Route path="*" element={<NotFound />} />
           </Route>
           {/* Admin Route (No Layout) */}
